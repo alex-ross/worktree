@@ -33,7 +33,8 @@ Cloudflare Pages project: `worktree` in the account that owns `aross.se`.
 The native [Pages Git integration](https://developers.cloudflare.com/pages/configuration/git-integration/)
 handles deployment, so no GitHub deployment secrets or additional workflow are needed.
 Preview deployments are separate from production and Cloudflare marks them `noindex`.
-The production Pages hostname redirects to the canonical custom domain.
+The production Pages hostname also has a `noindex` header; the canonical URL points
+to the custom domain, which remains indexable.
 
 `index.html` contains the searchable content, canonical URL, social metadata, and
 SoftwareApplication structured data. `robots.txt` allows crawling and advertises
