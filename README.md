@@ -1,14 +1,14 @@
 # worktree
 
-**Byt uppgift på sekunder. Behåll ditt flow.**
+**Switch tasks in seconds. Stay in your flow.**
 
-Skapa, hitta och öppna Git-worktrees utan katalogletande. Skriv `worktree` för
-en terminalväljare med fuzzy-sökning, piltangenter och musklick. Byggt i Rust
-för macOS och Linux, med stöd för Codex-worktrees.
+Create, find, and open Git worktrees without hunting for directories. Run `worktree`
+for a terminal picker with fuzzy search, arrow keys, and mouse support. Built in Rust
+for macOS and Linux, with support for Codex worktrees.
 
-## Installera
+## Install
 
-Med Homebrew:
+With Homebrew:
 
 ```sh
 brew tap alex-ross/worktree https://github.com/alex-ross/worktree
@@ -16,49 +16,49 @@ brew trust --formula alex-ross/worktree/worktree
 brew install --formula --HEAD alex-ross/worktree/worktree
 ```
 
-Lägg till i `~/.zshrc` för katalogbyte och autocomplete:
+Add this to `~/.zshrc` for directory switching and autocomplete:
 
 ```sh
 source "$(brew --prefix worktree)/share/worktree/init.zsh"
 ```
 
-För bash: använd `init.bash` i `~/.bashrc` eller `~/.bash_profile`.
-Öppna en ny terminal. Git behövs vid körning; Rust behövs bara vid bygge.
+For bash, use `init.bash` in `~/.bashrc` or `~/.bash_profile`.
+Open a new terminal. Git is required at runtime; Rust is only needed to build.
 
-Bygg själv: installera [Rust](https://rustup.rs), klona projektet och kör `sh install.sh`.
+To build from source, install [Rust](https://rustup.rs), clone the project, and run `sh install.sh`.
 
-## Använd
+## Usage
 
-Kör i ett Git-projekt:
+Run these commands in a Git project:
 
 ```sh
-worktree create foobar          # skapa branch + worktree och gå dit
-worktree open foobar            # gå till en befintlig worktree
-worktree                       # sök, välj och öppna
-worktree fork foobar experiment # kopiera till en ny branch
-worktree remove experiment      # ta bort worktree, behåll branch
-worktree list                  # lista worktrees; --json för JSON
+worktree create foobar          # create a branch + worktree and switch to it
+worktree open foobar            # switch to an existing worktree
+worktree                       # search, select, and open
+worktree fork foobar experiment # copy to a new branch
+worktree remove experiment      # remove the worktree, keep the branch
+worktree list                  # list worktrees; --json for JSON
 ```
 
-Standardplats: `~/.worktree/<branch>/<projekt>`. Ändra med `--base /sökväg` eller
-`WORKTREE_HOME`. En befintlig branch används; annars skapas den från HEAD.
+Default location: `~/.worktree/<branch>/<project>`. Change it with `--base /path` or
+`WORKTREE_HOME`. An existing branch is reused; otherwise, one is created from HEAD.
 
-I väljaren: **Ctrl-N** skapar, **Ctrl-F** forkar och **Ctrl-D** tar bort.
-Fork behåller staged/unstaged ändringar och untracked filer. Borttagning skyddar
-lokala filer; `--force` kastar dem. Lämna worktreen innan du tar bort den.
+In the picker: **Ctrl-N** creates, **Ctrl-F** forks, and **Ctrl-D** removes.
+Forking preserves staged and unstaged changes and untracked files. Removal protects
+local files; `--force` discards them. Leave the worktree before removing it.
 
-Lägg relativa filer eller globmönster i `.worktreeinclude` för att kopiera även
-ignorerade filer vid create/fork, exempelvis `.env` och `secrets/`. Symboliska
-länkar och sökvägar utanför projektet avvisas.
+Add relative file paths or glob patterns to `.worktreeinclude` to also copy
+ignored files when creating or forking, such as `.env` and `secrets/`. Symbolic
+links and paths outside the project are rejected.
 
-`worktree register /sökväg/till/projekt` gör projektets worktrees synliga överallt.
-Codex-worktrees upptäcks under `${CODEX_HOME:-~/.codex}/worktrees`.
+`worktree register /path/to/project` makes the project's worktrees visible from anywhere.
+Codex worktrees are discovered under `${CODEX_HOME:-~/.codex}/worktrees`.
 
-## Utveckla
+## Development
 
-Backend: [`worktree-core`](crates/worktree-core), separat från CLI och terminalväljaren.
-Varje PR testas på macOS/Linux, Intel/ARM, inklusive shell, terminal och installation.
-Homebrew-installationen testas på macOS och Linux.
+Backend: [`worktree-core`](crates/worktree-core), separate from the CLI and terminal picker.
+Every PR is tested on macOS/Linux and Intel/ARM, including shell integration, the terminal, and installation.
+Homebrew installation is tested on macOS and Linux.
 
 ```sh
 cargo test --workspace --locked
