@@ -1,0 +1,12 @@
+FROM rust:1.99-bookworm
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends git python3 zsh \
+    && rm -rf /var/lib/apt/lists/* \
+    && rustup component add rustfmt clippy
+
+WORKDIR /app
+COPY . .
+RUN cargo fetch --locked
+
+CMD ["sh", "-c", "cargo fmt --all --check && cargo clippy --workspace --all-targets --locked -- -D warnings && cargo test --workspace --locked && python3 tests/tui_smoke.py && python3 tests/install_smoke.py"]

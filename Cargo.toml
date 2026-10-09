@@ -1,0 +1,26 @@
+[package]
+name = "worktree"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.89"
+description = "Fast Git worktree management with a terminal picker"
+license = "MIT"
+
+[workspace]
+members = ["crates/worktree-core"]
+resolver = "3"
+
+[dependencies]
+worktree-core = { path = "crates/worktree-core" }
+clap = { version = "4.5", features = ["derive", "env"] }
+crossterm = "0.29"
+ratatui = { version = "0.30", default-features = false, features = ["crossterm"] }
+serde_json = "1"
+
+[dev-dependencies]
+tempfile = "3"
+
+[profile.release]
+lto = "thin"
+strip = true
+
