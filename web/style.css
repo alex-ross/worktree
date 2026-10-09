@@ -8,6 +8,7 @@
   --accent: #ae3b1a;
   --accent-bg: #bd421f;
   --tint: #efeee7;
+  --github-logo-filter: invert(1);
   --mono: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
   --sans:
     -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
@@ -23,6 +24,7 @@
     --accent: #f39168;
     --accent-bg: #b73c1c;
     --tint: #1d2420;
+    --github-logo-filter: none;
   }
 }
 :root[data-theme="dark"] {
@@ -35,6 +37,7 @@
   --accent: #f39168;
   --accent-bg: #b73c1c;
   --tint: #1d2420;
+  --github-logo-filter: none;
 }
 * {
   box-sizing: border-box;
@@ -120,9 +123,12 @@ svg {
   font-size: 13px;
   font-weight: 550;
 }
-.site-header nav a span {
-  margin-left: 5px;
-  color: var(--muted);
+.github-link {
+  display: inline-flex;
+}
+.github-link img {
+  display: block;
+  filter: var(--github-logo-filter);
 }
 .theme-toggle {
   background: transparent;
@@ -558,6 +564,7 @@ pre {
 }
 .site-footer > div {
   display: flex;
+  align-items: center;
   gap: 23px;
   margin-left: auto;
   font-size: 11px;

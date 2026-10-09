@@ -3,6 +3,9 @@
 The website at https://worktree.aross.se is plain HTML, CSS, JavaScript, and product
 images in `/web`. It has no build dependencies, server code, or Pages Functions.
 
+The GitHub mark is downloaded from [logo.dev](https://www.logo.dev/search/brands/github.com)
+and served locally as `web/assets/github.svg`.
+
 ## Preview and check
 
 ```sh
