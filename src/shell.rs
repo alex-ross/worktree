@@ -53,8 +53,10 @@ _worktree() {
       esac ;;
   esac
 }
-(( $+functions[compdef] )) || { autoload -Uz compinit; compinit; }
-compdef _worktree worktree
+if [[ -o interactive ]]; then
+  (( $+functions[compdef] )) || { autoload -Uz compinit; compinit -i; }
+  compdef _worktree worktree
+fi
 "#
         }
         Shell::Bash => {
