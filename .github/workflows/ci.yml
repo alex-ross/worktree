@@ -13,6 +13,19 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  website:
+    name: Website
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check website behavior, assets, and installation instructions
+        run: node --test tests/web.mjs
+
   test:
     name: Tests (${{ matrix.os }})
     timeout-minutes: 20

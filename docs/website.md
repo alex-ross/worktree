@@ -1,0 +1,44 @@
+# Website
+
+The website at https://worktree.aross.se is plain HTML, CSS, JavaScript, and product
+images in `/web`. It has no build dependencies, server code, or Pages Functions.
+
+## Preview and check
+
+```sh
+python3 -m http.server 4173 --directory web
+node --test tests/web.mjs
+```
+
+Open http://localhost:4173. Check both themes and a narrow viewport. Theme selection
+uses the system setting until the visitor chooses a theme; that choice is saved
+locally. The content and installation commands also work without JavaScript.
+
+## Deployment
+
+Cloudflare Pages project: `worktree` in the account that owns `aross.se`.
+
+| Setting | Value |
+| --- | --- |
+| Git repository | `alex-ross/worktree` |
+| Production branch | `main` |
+| Root directory | Repository root |
+| Build command | `node --test tests/web.mjs` |
+| Output directory | `web` |
+| Production deployments | Every push to `main`, including merges |
+| Preview deployments | Other branches |
+| Custom domain | `worktree.aross.se` |
+| Pages hostname | `worktree-auv.pages.dev` |
+
+The native [Pages Git integration](https://developers.cloudflare.com/pages/configuration/git-integration/)
+handles deployment, so no GitHub deployment secrets or additional workflow are needed.
+Preview deployments are separate from production and Cloudflare marks them `noindex`.
+The production Pages hostname redirects to the canonical custom domain.
+
+`index.html` contains the searchable content, canonical URL, social metadata, and
+SoftwareApplication structured data. `robots.txt` allows crawling and advertises
+the sitemap. These make the site eligible for indexing; Google chooses when to index it.
+
+Update the Homebrew commands alongside README changes. They currently install HEAD
+because the formula has no tagged release. See [product image provenance](product-images.md)
+before replacing the screenshot. Use only isolated, fictional demo data.

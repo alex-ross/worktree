@@ -1,5 +1,7 @@
 # worktree
 
+[worktree.aross.se](https://worktree.aross.se)
+
 **Switch tasks in seconds. Stay in your flow.**
 
 Create, find, and open Git worktrees without hunting for directories. Run `worktree`
@@ -65,3 +67,5 @@ cargo test --workspace --locked
 docker build -f Dockerfile.test -t worktree-test-linux .
 docker run --rm worktree-test-linux
 ```
+
+The static website lives in [`web`](web). See [website development and deployment](docs/website.md).
