@@ -48,7 +48,7 @@ with tempfile.TemporaryDirectory(prefix="worktree-brew-") as temporary:
     finally:
         try:
             if installed:
-                run(["brew", "uninstall", "--formula", formula_path], env=env)
+                run(["brew", "uninstall", "--formula", tap + "/worktree"], env=env)
         finally:
             if tapped:
                 run(["brew", "untap", tap], env=env)
