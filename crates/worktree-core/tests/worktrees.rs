@@ -134,12 +134,42 @@ fn unsafe_includes_are_rejected_before_any_worktree_is_created() {
         "../outside",
         "/etc/passwd",
         ".git/config",
+        ".GIT",
+        ".GiT/config",
         "secrets/../../outside",
     ] {
         fs::write(f.repo.join(".worktreeinclude"), pattern).unwrap();
         assert!(f.manager.create(&f.repo, "unsafe").is_err(), "{pattern}");
         assert!(!f.manager.base.join("unsafe").exists());
     }
+}
+
+#[test]
+fn included_secrets_stay_private_under_a_shared_base() {
+    use std::os::unix::fs::PermissionsExt;
+    let f = Fixture::new();
+    fs::create_dir_all(f.manager.base.join("private")).unwrap();
+    for directory in [&f.manager.base, &f.manager.base.join("private")] {
+        fs::set_permissions(directory, fs::Permissions::from_mode(0o755)).unwrap();
+    }
+    fs::write(f.repo.join(".worktreeinclude"), ".env\nsecrets/\n").unwrap();
+    fs::write(f.repo.join(".env"), "root secret").unwrap();
+    fs::create_dir(f.repo.join("secrets")).unwrap();
+    fs::set_permissions(f.repo.join("secrets"), fs::Permissions::from_mode(0o700)).unwrap();
+    fs::write(f.repo.join("secrets/token"), "directory secret").unwrap();
+    for file in [".env", "secrets/token"] {
+        fs::set_permissions(f.repo.join(file), fs::Permissions::from_mode(0o644)).unwrap();
+    }
+    let tree = f.manager.create(&f.repo, "private").unwrap();
+    assert_eq!(
+        fs::metadata(&tree.path).unwrap().permissions().mode() & 0o777,
+        0o700
+    );
+    assert_eq!(fs::read(tree.path.join(".env")).unwrap(), b"root secret");
+    assert_eq!(
+        fs::read(tree.path.join("secrets/token")).unwrap(),
+        b"directory secret"
+    );
 }
 
 #[test]
@@ -185,6 +215,20 @@ fn fork_preserves_staged_unstaged_untracked_and_included_files() {
         git(&source.path, &["rev-parse", "HEAD"])
     );
     assert!(f.manager.fork(&source.path, "forked").is_err());
+}
+
+#[test]
+fn fork_ignores_diff_display_settings() {
+    let f = Fixture::new();
+    let source = f.manager.create(&f.repo, "source").unwrap();
+    fs::write(source.path.join("file.txt"), "staged\n").unwrap();
+    git(&source.path, &["add", "file.txt"]);
+    fs::write(source.path.join("file.txt"), "unstaged\n").unwrap();
+    git(&source.path, &["config", "color.ui", "always"]);
+    git(&source.path, &["config", "diff.noprefix", "true"]);
+    let fork = f.manager.fork(&source.path, "configured").unwrap();
+    assert_eq!(git(&fork.path, &["show", ":file.txt"]), b"staged\n");
+    assert_eq!(fs::read(fork.path.join("file.txt")).unwrap(), b"unstaged\n");
 }
 
 #[test]

@@ -52,6 +52,8 @@ local files; `--force` discards them. Leave the worktree before removing it.
 Add relative file paths or glob patterns to `.worktreeinclude` to also copy
 ignored files when creating or forking, such as `.env` and `secrets/`. Symbolic
 links and paths outside the project are rejected.
+New worktree directories are accessible only to their owner, protecting copied
+local files even when the base directory is shared.
 
 `worktree register /path/to/project` makes the project's worktrees visible from anywhere.
 Codex worktrees are discovered under `${CODEX_HOME:-~/.codex}/worktrees`.
