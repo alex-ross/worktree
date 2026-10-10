@@ -46,3 +46,22 @@ the sitemap. These make the site eligible for indexing; Google chooses when to i
 Update the Homebrew commands alongside README changes. They currently install HEAD
 because the formula has no tagged release. See [product image provenance](product-images.md)
 before replacing the screenshot. Use only isolated, fictional demo data.
+
+## Security headers
+
+`web/_headers` applies a restrictive Content Security Policy to every static response,
+including the 404 page. Only local scripts, styles, and images are allowed; embedding,
+forms, plugins, and other resource types are blocked. The inline JSON-LD is a non-executable
+data block and needs no script exception. The website test rejects inline executable
+scripts and styles. No `unsafe-inline` or `unsafe-eval` is allowed.
+
+HSTS requires HTTPS for one year on the responding hostname. It intentionally omits
+`includeSubDomains` and `preload`, so it does not commit other hostnames to this policy.
+The existing `nosniff` and `strict-origin-when-cross-origin` headers remain enabled.
+Headers are served through [Cloudflare Pages](https://developers.cloudflare.com/pages/configuration/headers/).
+
+The PTK report also included findings outside this site's scope: its cookie list belonged
+to Google and GitHub, and `root.dataset.theme` is only the color-theme switch, not an admin
+gate. The live response has no credentialed CORS header or legacy `X-XSS-Protection`.
+`Server: cloudflare` identifies the CDN without exposing an application version.
+Do not commit raw scanner exports containing session cookies or authorization headers.

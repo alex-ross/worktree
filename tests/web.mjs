@@ -161,3 +161,32 @@ test('Homebrew and shell instructions match README, with project and author link
   assert.ok(links.includes('https://aross.se'));
   assert.ok(links.includes('https://github.com/alex-ross/worktree#install'));
 });
+
+test('security headers restrict content without blocking the site or its structured data', () => {
+  const headers = readFileSync(new URL('_headers', web), 'utf8').split('\n\n')[0];
+  assert.ok(headers.startsWith('/*\n'));
+  assert.match(headers, /Strict-Transport-Security: max-age=31536000\s*$/m);
+  assert.match(headers, /X-Content-Type-Options: nosniff/);
+  assert.match(headers, /Referrer-Policy: strict-origin-when-cross-origin/);
+  const csp = headers.match(/Content-Security-Policy: (.+)/)[1];
+  const directives = Object.fromEntries(csp.split(';').map(part => {
+    const [name, ...sources] = part.trim().split(/\s+/);
+    return [name, sources];
+  }));
+  for (const name of ['default-src', 'object-src', 'base-uri', 'form-action', 'frame-ancestors']) {
+    assert.deepEqual(directives[name], ["'none'"], name);
+  }
+  for (const name of ['script-src', 'style-src', 'img-src']) assert.deepEqual(directives[name], ["'self'"]);
+  for (const file of ['index.html', '404.html']) {
+    const page = readFileSync(new URL(file, web), 'utf8');
+    assert.doesNotMatch(page, /<style\b|\s(?:style|on\w+)\s*=/i, file);
+    for (const [, tag, body] of page.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script\s*>/g)) {
+      const src = attribute(tag, 'src');
+      if (src) assert.equal(src, '/app.js');
+      else {
+        assert.equal(attribute(tag, 'type'), 'application/ld+json');
+        assert.doesNotThrow(() => JSON.parse(body));
+      }
+    }
+  }
+});
