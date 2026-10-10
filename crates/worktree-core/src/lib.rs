@@ -7,6 +7,7 @@ use std::{
     ffi::OsStr,
     fs::{self, OpenOptions},
     io::{Read, Write},
+    os::unix::fs::PermissionsExt,
     path::{Path, PathBuf},
 };
 
@@ -289,12 +290,23 @@ impl Manager {
                         "--binary",
                         "--no-ext-diff",
                         "--no-textconv",
+                        "--no-color",
+                        "--src-prefix=a/",
+                        "--dst-prefix=b/",
                         "HEAD",
                     ],
                 )?,
                 git::run(
                     &source,
-                    ["diff", "--binary", "--no-ext-diff", "--no-textconv"],
+                    [
+                        "diff",
+                        "--binary",
+                        "--no-ext-diff",
+                        "--no-textconv",
+                        "--no-color",
+                        "--src-prefix=a/",
+                        "--dst-prefix=b/",
+                    ],
                 )?,
             )
         } else {
@@ -340,6 +352,8 @@ impl Manager {
         });
         git::run(&source, args)?;
         let copied = (|| {
+            // Included files may rely on private parent directories in the source.
+            fs::set_permissions(&target, fs::Permissions::from_mode(0o700))?;
             git::apply(&target, &staged, true)?;
             git::apply(&target, &unstaged, false)?;
             include::copy(&source, &target, &files.into_iter().collect::<Vec<_>>())

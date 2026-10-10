@@ -8,7 +8,7 @@ use std::{
 fn safe(path: &Path) -> Result<()> {
     if path.as_os_str().is_empty()
         || path.components().any(|part| match part {
-            Component::Normal(name) => name == ".git",
+            Component::Normal(name) => name.as_encoded_bytes().eq_ignore_ascii_case(b".git"),
             _ => true,
         })
     {
