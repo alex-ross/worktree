@@ -6,6 +6,9 @@ images in `/web`. It has no build dependencies, server code, or Pages Functions.
 The GitHub mark is downloaded from [logo.dev](https://www.logo.dev/search/brands/github.com)
 and served locally as `web/assets/github.svg`.
 
+The stylesheet URL is versioned to replace older cached theme rules. Its `no-cache`
+header lets browsers store it but requires revalidation before reuse.
+
 ## Preview and check
 
 ```sh
